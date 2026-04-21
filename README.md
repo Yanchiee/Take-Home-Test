@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Take-Home Test Platform
 
-## Getting Started
+Self-hosted take-home test delivery and timing platform for Arca Academy.
 
-First, run the development server:
+## Local setup
+
+1. `cp .env.local.example .env.local` and fill in values:
+   - **Supabase**: create a project at https://supabase.com, paste the project URL and the **service role** key (NOT the anon key).
+   - **Admin**: pick a strong password (`ADMIN_PASSWORD`) and a long random string (`ADMIN_COOKIE_SECRET`).
+2. In Supabase → SQL Editor, paste the contents of `schema.sql` and run it once.
+3. `npm install`
+4. `npm run dev` → http://localhost:3000
+
+## Tests
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deploy to Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Push this repo to GitHub.
+2. In Vercel → New Project → import the repo.
+3. Add the environment variables from `.env.local` to Vercel project settings.
+4. Deploy.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Editing the test content
 
-## Learn More
+`content/test.md` contains the take-home test. Edit it, push to `main`, Vercel auto-deploys. Candidates — including in-progress ones — see the latest content on next page load.
 
-To learn more about Next.js, take a look at the following resources:
+## Admin access
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Visit `/admin` → enter `ADMIN_PASSWORD`. Cookie lasts 8 hours. Dashboard auto-refreshes every 30s.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture summary
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Candidates register with name + email at `/`
+- They get a unique resume token URL: `/test/<token>`
+- Server tracks active time via 10s heartbeats with a 15s grace window (`lib/accumulate.ts`)
+- Client tracks discrete events (idle, tab close, paste) via `/api/event`
+- On Finish, candidate pastes Drive + video links
+- Admin sees a table of all candidates + per-candidate timeline view
