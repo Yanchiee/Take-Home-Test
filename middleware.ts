@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { COOKIE_NAME, verifyAdminCookie } from './lib/auth';
 
-export async function proxy(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const isAdminPath = pathname.startsWith('/admin') && pathname !== '/admin/login';
