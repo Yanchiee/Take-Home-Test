@@ -99,8 +99,8 @@ export default function Landing() {
             maxWidth: '36ch',
           }}
         >
-          A measured hour or two with yourself and the work. Proceed at your own pace —
-          the clock attends to you, not the other way around.
+          An invitation to think carefully about a real problem — and to show us how
+          you work when no one is rushing you.
         </p>
 
         {/* Rule ornament */}
